@@ -1,7 +1,8 @@
 <script setup>
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 
 import AppMenuItem from './AppMenuItem.vue';
+import axios from 'axios';
 
 const model = ref([
     {
@@ -16,35 +17,32 @@ const model = ref([
             //{ label: 'List', icon: 'pi pi-fw pi-list', to: '/uikit/list' },
             //{ label: 'Media', icon: 'pi pi-fw pi-image', to: '/uikit/media' },
             //{ label: 'Menu', icon: 'pi pi-fw pi-bars', to: '/uikit/menu', preventExact: true },
-            //{ label: 'Chart', icon: 'pi pi-fw pi-chart-bar', to: '/uikit/charts' }
         ]
     },
     {
         label: 'Locations',
-        items: [
-            {
-                label: 'Submenu 1',
-                icon: 'pi pi-fw pi-bookmark',
-                items: [
-                    {
-                        label: 'Submenu 1.1',
-                        icon: 'pi pi-fw pi-bookmark',
-                        items: [
-                            { label: 'Submenu 1.1.1', icon: 'pi pi-fw pi-bookmark' },
-                            { label: 'Submenu 1.1.2', icon: 'pi pi-fw pi-bookmark' },
-                            { label: 'Submenu 1.1.3', icon: 'pi pi-fw pi-bookmark' }
-                        ]
-                    },
-                    {
-                        label: 'Submenu 1.2',
-                        icon: 'pi pi-fw pi-bookmark',
-                        items: [{ label: 'Submenu 1.2.1', icon: 'pi pi-fw pi-bookmark' }]
-                    }
-                ]
-            }
-        ]
+        items: []
     }
 ]);
+
+// Update the 'Locations' menu items based on the API response
+const fetchData = async () => {
+    try {
+        const locations = await axios.get('http://192.168.0.67/locations');
+
+        model.value[2].items = locations.data.map((location) => ({
+            label: location.name,
+            icon: 'pi pi-fw pi-list', // Assuming a default icon
+            items: [] // You can add sub-items here if needed
+        }));
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
+};
+
+onMounted(() => {
+    fetchData(); // Fetch data when the component is mounted
+});
 </script>
 
 <template>
