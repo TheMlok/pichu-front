@@ -12,11 +12,10 @@ const model = ref([
     {
         label: 'Graphs',
         items: [
-            { label: 'Daily graphs', icon: 'pi pi-fw pi-chart-bar', to: '/uikit/formlayout' }
-            //{ label: 'Table', icon: 'pi pi-fw pi-table', to: '/uikit/table' },
-            //{ label: 'List', icon: 'pi pi-fw pi-list', to: '/uikit/list' },
-            //{ label: 'Media', icon: 'pi pi-fw pi-image', to: '/uikit/media' },
-            //{ label: 'Menu', icon: 'pi pi-fw pi-bars', to: '/uikit/menu', preventExact: true },
+            { label: 'Daily graphs', icon: 'pi pi-fw pi-chart-bar', to: '/uikit/formlayout' },
+            { label: 'List locations', icon: 'pi pi-fw pi-list', to: '/uikit/formlayout' },
+            { label: 'List devices', icon: 'pi pi-fw pi-list', to: '/uikit/formlayout' },
+            { label: 'List sensors', icon: 'pi pi-fw pi-list', to: '/uikit/formlayout' }
         ]
     },
     {
