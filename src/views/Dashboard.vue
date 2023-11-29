@@ -98,14 +98,19 @@ watch(
     { immediate: true }
 );
 
-const optionTemperature = ref({
+const optionToday = ref({
+    color: ['rgba(237,22,22,0.53)', 'rgba(3,13,199,0.6)'],
     title: {
-        text: 'Temperature DHT22',
-        left: 'center'
+        text: 'Today raw values DHT22',
+        left: 'center',
+        top: 0
+    },
+    legend: {
+        top: 20
     },
     tooltip: {
         trigger: 'item',
-        formatter: '{a} <br/>{b} : {c}', // Sem si pak dam ten timestamp taky
+        formatter: '{b} : {c}', // Sem si pak dam ten timestamp taky
         axisPointer: {
             type: 'cross',
             label: {
@@ -117,33 +122,28 @@ const optionTemperature = ref({
         }
     },
     xAxis: {
-        type: 'value',
+        type: 'category',
         nameLocation: 'center',
-        nameGap: 50,
+        data: [],
         nameTextStyle: {
             fontWeight: 'bold' // Make the xAxis name bold
-        },
-        //min: 0, // Set the minimum value of the x-axis
-        splitNumber: 10,
-        splitLine: {
-            lineStyle: {
-                type: 'dashed'
-            }
         }
     },
-    yAxis: {
-        type: 'value',
-        nameLocation: 'center',
-        nameGap: 50,
-        nameTextStyle: {
-            fontWeight: 'bold' // Make the xAxis name bold
+    yAxis: [
+        {
+            type: 'value',
+            name: 'Temperature',
+            position: 'left',
+            min: 10
         },
-        splitLine: {
-            lineStyle: {
-                type: 'dashed'
-            }
+        {
+            type: 'value',
+            name: 'Humidity',
+            position: 'right',
+            min: 20,
+            max: 100
         }
-    },
+    ],
     grid: {
         top: '12%', // Adjust the top padding (percentage or pixel value)
         bottom: '9%', // Adjust the bottom padding (percentage or pixel value)
@@ -152,99 +152,29 @@ const optionTemperature = ref({
     },
     series: [
         {
-            name: 'Temperature DHT22',
-            type: 'line',
-            areaStyle: {
-                color: 'rgba(3,94,199,0.2)'
-            },
-            data: [], // Empty array for the fetched data
-            emphasis: {
-                itemStyle: {
-                    shadowBlur: 10,
-                    shadowOffsetX: 0,
-                    shadowColor: 'rgba(0, 0, 0, 0.5)'
-                }
-            }
-        }
-    ]
-});
-
-const optionHumidity = ref({
-    title: {
-        text: 'Humidity DHT22',
-        left: 'center'
-    },
-    tooltip: {
-        trigger: 'item',
-        formatter: '{a} <br/>{b} : {c}', // Sem si pak dam ten timestamp taky
-        axisPointer: {
-            type: 'cross',
-            label: {
-                backgroundColor: '#6a7985' // Set the background color for the label
-            },
-            lineStyle: {
-                type: 'dashed' // Set the line style to dashed
-            }
-        }
-    },
-    xAxis: {
-        type: 'value',
-        nameLocation: 'center',
-        nameGap: 50,
-        nameTextStyle: {
-            fontWeight: 'bold' // Make the xAxis name bold
+            name: 'Temperature',
+            type: 'bar',
+            yAxisIndex: 0,
+            data: []
         },
-        //min: 0, // Set the minimum value of the x-axis
-        splitNumber: 10,
-        splitLine: {
-            lineStyle: {
-                type: 'dashed'
-            }
-        }
-    },
-    yAxis: {
-        type: 'value',
-        nameLocation: 'center',
-        nameGap: 50,
-        nameTextStyle: {
-            fontWeight: 'bold' // Make the xAxis name bold
-        },
-        splitLine: {
-            lineStyle: {
-                type: 'dashed'
-            }
-        }
-    },
-    grid: {
-        top: '12%', // Adjust the top padding (percentage or pixel value)
-        bottom: '9%', // Adjust the bottom padding (percentage or pixel value)
-        left: '60px', // Adjust the left padding (percentage or pixel value)
-        right: '40px' // Adjust the right padding (percentage or pixel value)
-    },
-    series: [
         {
-            name: 'Humidity DHT22',
+            name: 'Humidity %',
             type: 'line',
+            yAxisIndex: 1,
             areaStyle: {
                 color: 'rgba(3,94,199,0.2)'
             },
-            data: [], // Empty array for the fetched data
-            emphasis: {
-                itemStyle: {
-                    shadowBlur: 10,
-                    shadowOffsetX: 0,
-                    shadowColor: 'rgba(0, 0, 0, 0.5)'
-                }
-            }
+            data: []
         }
     ]
 });
 
-const optionYesterdayTemperature = ref({
-    color: ['#ed1616', 'rgba(3,13,199,0.2)'],
+const optionYesterday = ref({
+    color: ['rgba(237,22,22,0.53)', 'rgba(3,13,199,0.6)'],
     title: {
-        text: 'Yesterday values DHT22',
-        left: 'center'
+        text: 'Yesterday aggregated values DHT22',
+        left: 'center',
+        top: 0
     },
     legend: {
         top: 20
@@ -312,32 +242,19 @@ const optionYesterdayTemperature = ref({
 
 const fetchData = async () => {
     try {
+        // Today data
         const todayResponse = await axios.get('http://192.168.0.67/sensors/dht22_data/today/1');
-        const yesterdayAggregatedResponse = await axios.get('http://192.168.0.67/history/dht22_data/1/yesterday');
 
-        const transformedTempData = todayResponse.data.map((item) => ({
-            value: item.temperature,
-            name: item.measured_at
-        }));
+        optionToday.value.series[0].data = todayResponse.data.map((item) => item.temperature);
+        optionToday.value.series[1].data = todayResponse.data.map((item) => item.humidity);
+        optionToday.value.xAxis.data = todayResponse.data.map((item) => item.measured_at);
 
-        const transformedHumData = todayResponse.data.map((item) => ({
-            value: item.humidity,
-            name: item.measured_at
-        }));
+        // yesterday aggregated data
+        const yesterdayResponse = await axios.get('http://192.168.0.67/history/dht22_data/1/yesterday');
 
-        // Update the series data in the ECharts option
-        optionTemperature.value.series[0].data = transformedTempData;
-        optionHumidity.value.series[0].data = transformedHumData;
-        //optionYesterdayTemperature.value.series[0].data = transformedYesterdayTempData;
-
-        const humidity = yesterdayAggregatedResponse.data.map((item) => item.humidity);
-        const temperature = yesterdayAggregatedResponse.data.map((item) => item.temperature);
-
-        const xaxisCategories = yesterdayAggregatedResponse.data.map((item) => item.segment_interval_name);
-
-        optionYesterdayTemperature.value.series[0].data = temperature; // segment_interval_name
-        optionYesterdayTemperature.value.series[1].data = humidity; // segment_interval_name
-        optionYesterdayTemperature.value.xAxis.data = xaxisCategories; // segment_interval_name
+        optionYesterday.value.series[0].data = yesterdayResponse.data.map((item) => item.temperature);
+        optionYesterday.value.series[1].data = yesterdayResponse.data.map((item) => item.humidity);
+        optionYesterday.value.xAxis.data = yesterdayResponse.data.map((item) => item.segment_interval_name);
     } catch (error) {
         console.error('Error fetching data:', error);
     }
@@ -353,21 +270,14 @@ onMounted(() => {
         <div class="col-12 xl:col-12">
             <div class="card">
                 <div class="chart-container">
-                    <v-chart class="chart" :option="optionTemperature" autoresize />
+                    <v-chart class="chart" :option="optionToday" autoresize />
                 </div>
             </div>
         </div>
         <div class="col-12 xl:col-12">
             <div class="card">
                 <div class="chart-container">
-                    <v-chart class="chart" :option="optionHumidity" autoresize />
-                </div>
-            </div>
-        </div>
-        <div class="col-12 xl:col-12">
-            <div class="card">
-                <div class="chart-container">
-                    <v-chart class="chart" :option="optionYesterdayTemperature" autoresize />
+                    <v-chart class="chart" :option="optionYesterday" autoresize />
                 </div>
             </div>
         </div>
