@@ -32,11 +32,21 @@ const fetchData = async () => {
         model.value[2].items = await Promise.all(
             locations.data.map(async (location) => {
                 const devices = await axios.get(`http://192.168.0.67/general/location_devices/${location.id}`);
-                const deviceItems = devices.data.map((device) => ({
-                    label: device.name,
-                    icon: 'pi pi-fw pi-device',
-                    items: [] // You can add sub-items here if needed
-                }));
+                const deviceItems = await Promise.all(
+                    devices.data.map(async (device) => {
+                        const sensors = await axios.get(`http://192.168.0.67/general/device_sensors/${device.id}`);
+                        const sensorItems = sensors.data.map((sensor) => ({
+                            label: sensor.sensor_type,
+                            icon: 'pi pi-fw pi-server'
+                        }));
+
+                        return {
+                            label: device.name,
+                            icon: 'pi pi-fw pi-tablet',
+                            items: sensorItems
+                        };
+                    })
+                );
 
                 return {
                     label: location.name,
