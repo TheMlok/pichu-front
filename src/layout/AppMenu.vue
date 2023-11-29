@@ -13,9 +13,9 @@ const model = ref([
         label: 'Graphs',
         items: [
             { label: 'Daily graphs', icon: 'pi pi-fw pi-chart-bar', to: '/uikit/formlayout' },
-            { label: 'List locations', icon: 'pi pi-fw pi-list', to: '/uikit/formlayout' },
-            { label: 'List devices', icon: 'pi pi-fw pi-list', to: '/uikit/formlayout' },
-            { label: 'List sensors', icon: 'pi pi-fw pi-list', to: '/uikit/formlayout' }
+            { label: 'List locations', icon: 'pi pi-fw pi-list', to: '/pages/locations' },
+            { label: 'List devices', icon: 'pi pi-fw pi-list', to: '/pages/devices' },
+            { label: 'List sensors', icon: 'pi pi-fw pi-list', to: '/pages/sensors' }
         ]
     },
     {

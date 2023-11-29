@@ -19,6 +19,21 @@ const router = createRouter({
                     component: () => import('@/views/uikit/FormLayout.vue')
                 },
                 {
+                    path: '/pages/locations',
+                    name: 'locations',
+                    component: () => import('@/views/pages/Locations.vue')
+                },
+                {
+                    path: '/pages/devices',
+                    name: 'devices',
+                    component: () => import('@/views/pages/Devices.vue')
+                },
+                {
+                    path: '/pages/sensors',
+                    name: 'sensors',
+                    component: () => import('@/views/pages/Sensors.vue')
+                },
+                {
                     path: '/uikit/menu',
                     component: () => import('@/views/uikit/Menu.vue'),
                     children: [
