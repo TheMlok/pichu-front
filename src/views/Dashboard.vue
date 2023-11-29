@@ -5,13 +5,13 @@ import { useLayout } from '@/layout/composables/layout';
 
 import { use } from 'echarts/core';
 import { CanvasRenderer } from 'echarts/renderers';
-import { LineChart } from 'echarts/charts';
+import { LineChart, BarChart } from 'echarts/charts';
 import { TitleComponent, TooltipComponent, LegendComponent } from 'echarts/components';
 import { GridComponent } from 'echarts/components';
 import VChart, { THEME_KEY } from 'vue-echarts';
 import axios from 'axios';
 
-use([CanvasRenderer, LineChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent]);
+use([CanvasRenderer, LineChart, BarChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent]);
 
 provide(THEME_KEY, 'light');
 
@@ -241,10 +241,13 @@ const optionHumidity = ref({
 });
 
 const optionYesterdayTemperature = ref({
-    color: ['#37c703', '#ed7e16'],
+    color: ['#ed1616', 'rgba(3,13,199,0.2)'],
     title: {
-        text: 'Yesterday temperature DHT22',
+        text: 'Yesterday values DHT22',
         left: 'center'
+    },
+    legend: {
+        top: 20
     },
     tooltip: {
         trigger: 'item',
@@ -260,35 +263,28 @@ const optionYesterdayTemperature = ref({
         }
     },
     xAxis: {
-        type: 'value',
+        type: 'category',
         nameLocation: 'center',
-        nameGap: 50,
         data: [],
         nameTextStyle: {
             fontWeight: 'bold' // Make the xAxis name bold
-        },
-        //min: 0, // Set the minimum value of the x-axis
-        splitNumber: 10,
-        splitLine: {
-            lineStyle: {
-                type: 'dashed'
-            }
         }
     },
-    yAxis: {
-        type: 'value',
-        nameLocation: 'center',
-        nameGap: 50,
-        data: [],
-        nameTextStyle: {
-            fontWeight: 'bold' // Make the xAxis name bold
+    yAxis: [
+        {
+            type: 'value',
+            name: 'Temperature',
+            position: 'left',
+            min: 10
         },
-        splitLine: {
-            lineStyle: {
-                type: 'dashed'
-            }
+        {
+            type: 'value',
+            name: 'Humidity',
+            position: 'right',
+            min: 20,
+            max: 100
         }
-    },
+    ],
     grid: {
         top: '12%', // Adjust the top padding (percentage or pixel value)
         bottom: '9%', // Adjust the bottom padding (percentage or pixel value)
@@ -297,19 +293,19 @@ const optionYesterdayTemperature = ref({
     },
     series: [
         {
-            name: 'Yesterday temperature DHT22',
+            name: 'Temperature',
+            type: 'bar',
+            yAxisIndex: 0,
+            data: []
+        },
+        {
+            name: 'Humidity %',
             type: 'line',
+            yAxisIndex: 1,
             areaStyle: {
                 color: 'rgba(3,94,199,0.2)'
             },
-            data: [], // Empty array for the fetched data
-            emphasis: {
-                itemStyle: {
-                    shadowBlur: 10,
-                    shadowOffsetX: 0,
-                    shadowColor: 'rgba(0, 0, 0, 0.5)'
-                }
-            }
+            data: []
         }
     ]
 });
@@ -329,36 +325,19 @@ const fetchData = async () => {
             name: item.measured_at
         }));
 
-        //const transformedYesterdayTempData = yesterdayAggregatedResponse.data.map((item) => ({
-        //    value: item.temperature,
-        //    name: item.measured_at
-        //}));
-
-        //console.log(transformedHumData);
-
         // Update the series data in the ECharts option
         optionTemperature.value.series[0].data = transformedTempData;
         optionHumidity.value.series[0].data = transformedHumData;
         //optionYesterdayTemperature.value.series[0].data = transformedYesterdayTempData;
 
-        const test = yesterdayAggregatedResponse.data.map((item) => ({
-            value: item.temperature,
-            name: item.segment_interval_name
-        }));
+        const humidity = yesterdayAggregatedResponse.data.map((item) => item.humidity);
+        const temperature = yesterdayAggregatedResponse.data.map((item) => item.temperature);
 
-        console.log(test);
+        const xaxisCategories = yesterdayAggregatedResponse.data.map((item) => item.segment_interval_name);
 
-        const xAxisData = test.map((item) => item.value); // Extract temperature data from 'value' property
-        const yAxisData = test.map((item) => item.name); // Extract segment interval names from 'name' property
-
-        console.log(xAxisData);
-        console.log(yAxisData);
-
-        optionYesterdayTemperature.value.series[0].data = test; // segment_interval_name
-        optionYesterdayTemperature.value.xAxis.data = xAxisData; // segment_interval_name
-        optionYesterdayTemperature.value.yAxis.data = yAxisData; // segment_interval_name
-
-        //optionYesterdayTemperature.value.series[0].data = test.map((item) => [item.value, item.name]);
+        optionYesterdayTemperature.value.series[0].data = temperature; // segment_interval_name
+        optionYesterdayTemperature.value.series[1].data = humidity; // segment_interval_name
+        optionYesterdayTemperature.value.xAxis.data = xaxisCategories; // segment_interval_name
     } catch (error) {
         console.error('Error fetching data:', error);
     }
