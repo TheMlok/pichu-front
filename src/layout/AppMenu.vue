@@ -29,11 +29,22 @@ const fetchData = async () => {
     try {
         const locations = await axios.get('http://192.168.0.67/locations');
 
-        model.value[2].items = locations.data.map((location) => ({
-            label: location.name,
-            icon: 'pi pi-fw pi-list', // Assuming a default icon
-            items: [] // You can add sub-items here if needed
-        }));
+        model.value[2].items = await Promise.all(
+            locations.data.map(async (location) => {
+                const devices = await axios.get(`http://192.168.0.67/general/location_devices/${location.id}`);
+                const deviceItems = devices.data.map((device) => ({
+                    label: device.name,
+                    icon: 'pi pi-fw pi-device',
+                    items: [] // You can add sub-items here if needed
+                }));
+
+                return {
+                    label: location.name,
+                    icon: 'pi pi-fw pi-list',
+                    items: deviceItems
+                };
+            })
+        );
     } catch (error) {
         console.error('Error fetching data:', error);
     }
