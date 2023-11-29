@@ -109,17 +109,8 @@ const optionToday = ref({
         top: 20
     },
     tooltip: {
-        trigger: 'item',
-        formatter: '{b} : {c}', // Sem si pak dam ten timestamp taky
-        axisPointer: {
-            type: 'cross',
-            label: {
-                backgroundColor: '#6a7985' // Set the background color for the label
-            },
-            lineStyle: {
-                type: 'dashed' // Set the line style to dashed
-            }
-        }
+        trigger: 'axis',
+        axisPointer: { type: 'cross' }
     },
     xAxis: {
         type: 'category',
@@ -180,17 +171,8 @@ const optionYesterday = ref({
         top: 20
     },
     tooltip: {
-        trigger: 'item',
-        formatter: '{b} : {c}', // Sem si pak dam ten timestamp taky
-        axisPointer: {
-            type: 'cross',
-            label: {
-                backgroundColor: '#6a7985' // Set the background color for the label
-            },
-            lineStyle: {
-                type: 'dashed' // Set the line style to dashed
-            }
-        }
+        trigger: 'axis',
+        axisPointer: { type: 'cross' }
     },
     xAxis: {
         type: 'category',
