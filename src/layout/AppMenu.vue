@@ -11,8 +11,11 @@ const model = ref([
     },
     {
         label: 'Graphs',
+        items: [{ label: 'Daily graphs', icon: 'pi pi-fw pi-chart-bar', to: '/uikit/formlayout' }]
+    },
+    {
+        label: 'Summaries',
         items: [
-            { label: 'Daily graphs', icon: 'pi pi-fw pi-chart-bar', to: '/uikit/formlayout' },
             { label: 'List locations', icon: 'pi pi-fw pi-list', to: '/pages/locations' },
             { label: 'List devices', icon: 'pi pi-fw pi-list', to: '/pages/devices' },
             { label: 'List sensors', icon: 'pi pi-fw pi-list', to: '/pages/sensors' }
@@ -29,7 +32,7 @@ const fetchData = async () => {
     try {
         const locations = await axios.get('http://192.168.0.67/locations');
 
-        model.value[2].items = await Promise.all(
+        model.value[3].items = await Promise.all(
             locations.data.map(async (location) => {
                 const devices = await axios.get(`http://192.168.0.67/general/location_devices/${location.id}`);
                 const deviceItems = await Promise.all(
