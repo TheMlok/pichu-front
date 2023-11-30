@@ -10,6 +10,9 @@ import { TitleComponent, TooltipComponent, LegendComponent } from 'echarts/compo
 import { GridComponent } from 'echarts/components';
 import VChart, { THEME_KEY } from 'vue-echarts';
 import axios from 'axios';
+import GraphsService from '@/service/GraphsService';
+
+const graphsService = new GraphsService();
 
 use([CanvasRenderer, LineChart, BarChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent]);
 
@@ -98,130 +101,8 @@ watch(
     { immediate: true }
 );
 
-const optionToday = ref({
-    color: ['rgba(237,22,22,0.53)', 'rgba(3,13,199,0.6)'],
-    title: {
-        text: 'Today raw values DHT22',
-        left: 'center',
-        top: 0
-    },
-    legend: {
-        top: 20
-    },
-    tooltip: {
-        trigger: 'axis',
-        axisPointer: { type: 'cross' }
-    },
-    xAxis: {
-        type: 'category',
-        nameLocation: 'center',
-        data: [],
-        nameTextStyle: {
-            fontWeight: 'bold' // Make the xAxis name bold
-        }
-    },
-    yAxis: [
-        {
-            type: 'value',
-            name: 'Temperature',
-            position: 'left',
-            min: 10
-        },
-        {
-            type: 'value',
-            name: 'Humidity',
-            position: 'right',
-            min: 20,
-            max: 100
-        }
-    ],
-    grid: {
-        top: '12%', // Adjust the top padding (percentage or pixel value)
-        bottom: '9%', // Adjust the bottom padding (percentage or pixel value)
-        left: '60px', // Adjust the left padding (percentage or pixel value)
-        right: '40px' // Adjust the right padding (percentage or pixel value)
-    },
-    series: [
-        {
-            name: 'Temperature',
-            type: 'bar',
-            yAxisIndex: 0,
-            data: []
-        },
-        {
-            name: 'Humidity %',
-            type: 'line',
-            yAxisIndex: 1,
-            areaStyle: {
-                color: 'rgba(3,94,199,0.2)'
-            },
-            data: []
-        }
-    ]
-});
-
-const optionYesterday = ref({
-    color: ['rgba(237,22,22,0.53)', 'rgba(3,13,199,0.6)'],
-    title: {
-        text: 'Yesterday aggregated values DHT22',
-        left: 'center',
-        top: 0
-    },
-    legend: {
-        top: 20
-    },
-    tooltip: {
-        trigger: 'axis',
-        axisPointer: { type: 'cross' }
-    },
-    xAxis: {
-        type: 'category',
-        nameLocation: 'center',
-        data: [],
-        nameTextStyle: {
-            fontWeight: 'bold' // Make the xAxis name bold
-        }
-    },
-    yAxis: [
-        {
-            type: 'value',
-            name: 'Temperature',
-            position: 'left',
-            min: 10
-        },
-        {
-            type: 'value',
-            name: 'Humidity',
-            position: 'right',
-            min: 20,
-            max: 100
-        }
-    ],
-    grid: {
-        top: '12%', // Adjust the top padding (percentage or pixel value)
-        bottom: '9%', // Adjust the bottom padding (percentage or pixel value)
-        left: '60px', // Adjust the left padding (percentage or pixel value)
-        right: '40px' // Adjust the right padding (percentage or pixel value)
-    },
-    series: [
-        {
-            name: 'Temperature',
-            type: 'bar',
-            yAxisIndex: 0,
-            data: []
-        },
-        {
-            name: 'Humidity %',
-            type: 'line',
-            yAxisIndex: 1,
-            areaStyle: {
-                color: 'rgba(3,94,199,0.2)'
-            },
-            data: []
-        }
-    ]
-});
-
+const optionToday = ref(graphsService.generateBasicGraphOptions('Today raw values DHT22', 10, 20, 100));
+const optionYesterday = ref(graphsService.generateBasicGraphOptions('Yesterday aggregated values DHT22', 10, 20, 100));
 const fetchData = async () => {
     try {
         // Today data
