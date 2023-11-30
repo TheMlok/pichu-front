@@ -108,6 +108,8 @@ const optionBmeYesterday = ref(graphsService.generateOneLineGraphOptions('Yester
 const optionBmeMeteoToday = ref(graphsService.generateTwoSeriesGraphOptions('Today BME meteo values', 'Atmospheric pressure', 'Humidity %', 900, 1090, 20, 100, 'rgba(165,22,237,0.53)', 'rgba(3,13,199,0.6)', 'rgba(3,13,199,0.16)', 'line'));
 const optionBmePressureToday = ref(graphsService.generateOneLineGraphOptions('Gas resistance today', 'Gas resistance', 0, 0, 'rgb(199,101,3)', 'rgba(199,101,3,0.44)'));
 
+const lightIntensityToday = ref(graphsService.generateOneLineGraphOptions('Light intensity today', 'Lux value', 0, 0, 'rgb(199,196,3)', 'rgba(199,196,3,0.35)'));
+
 const fetchData = async () => {
     try {
         // DHT22
@@ -144,6 +146,11 @@ const fetchData = async () => {
         const yesterdayBmeResponse = await axios.get('http://192.168.0.67/history/bme680_data/2/today');
         optionBmeYesterday.value.series[0].data = yesterdayBmeResponse.data.map((item) => item.air_quality_percentage);
         optionBmeYesterday.value.xAxis.data = yesterdayBmeResponse.data.map((item) => item.segment_interval_name);
+
+        // TSL light
+        const todayLight = await axios.get('http://192.168.0.67/sensors/tsl2591_data/today/3');
+        lightIntensityToday.value.series[0].data = todayLight.data.map((item) => item.lux);
+        lightIntensityToday.value.xAxis.data = todayLight.data.map((item) => item.measured_at);
     } catch (error) {
         console.error('Error fetching data:', error);
     }
@@ -195,6 +202,13 @@ onMounted(() => {
             <div class="card">
                 <div class="chart-container">
                     <v-chart class="chart" :option="optionBmePressureToday" autoresize />
+                </div>
+            </div>
+        </div>
+        <div class="col-12 xl:col-12">
+            <div class="card">
+                <div class="chart-container">
+                    <v-chart class="chart" :option="lightIntensityToday" autoresize />
                 </div>
             </div>
         </div>
