@@ -1,5 +1,5 @@
 export default class GraphsService {
-    generateTempHumidityGraphOptions(title, firstSeriesName, secondSeriesName, firstMin, firstMax, secondMin, secondMax, firstLineColor, secondLineColor, areaColor) {
+    generateTwoSeriesGraphOptions(title, firstSeriesName, secondSeriesName, firstMin, firstMax, secondMin, secondMax, firstLineColor, secondLineColor, areaColor, firstSeriesType) {
         const yAxis = [
             {
                 type: 'value',
@@ -21,7 +21,7 @@ export default class GraphsService {
         }
 
         if (firstMax !== 0) {
-            yAxis[0].min = firstMin;
+            yAxis[0].max = firstMax;
         }
 
         if (secondMin !== 0) {
@@ -64,7 +64,7 @@ export default class GraphsService {
             series: [
                 {
                     name: firstSeriesName,
-                    type: 'bar',
+                    type: firstSeriesType,
                     yAxisIndex: 0,
                     data: []
                 },
@@ -82,6 +82,21 @@ export default class GraphsService {
     }
 
     generateOneLineGraphOptions(title, seriesName, min, max, lineColor, areaColor) {
+        const yAxis = [
+            {
+                type: 'value',
+                name: seriesName
+            }
+        ];
+
+        if (min !== 0) {
+            yAxis[0].min = min;
+        }
+
+        if (max !== 0) {
+            yAxis[0].max = max;
+        }
+
         return {
             color: lineColor,
             title: {
@@ -104,14 +119,7 @@ export default class GraphsService {
                     fontWeight: 'bold'
                 }
             },
-            yAxis: [
-                {
-                    type: 'value',
-                    name: seriesName,
-                    min: min,
-                    max: max
-                }
-            ],
+            yAxis: yAxis,
             grid: {
                 top: '12%',
                 bottom: '9%',

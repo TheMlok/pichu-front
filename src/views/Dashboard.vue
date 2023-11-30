@@ -101,10 +101,12 @@ watch(
     { immediate: true }
 );
 
-const optionDht22Today = ref(graphsService.generateTempHumidityGraphOptions('Today raw values DHT22', 'Temperature', 'Humidity %', 10, 0, 20, 100, 'rgba(237,22,22,0.53)', 'rgba(3,13,199,0.6)', 'rgba(3,13,199,0.16)'));
-const optionDht22Yesterday = ref(graphsService.generateTempHumidityGraphOptions('Yesterday aggregated values DHT22', 'Temperature', 'Humidity %', 10, 0, 20, 100, 'rgba(237,22,22,0.53)', 'rgba(3,13,199,0.6)', 'rgba(3,13,199,0.16)'));
+const optionDht22Today = ref(graphsService.generateTwoSeriesGraphOptions('Today raw values DHT22', 'Temperature', 'Humidity %', 10, 0, 20, 100, 'rgba(237,22,22,0.53)', 'rgba(3,13,199,0.6)', 'rgba(3,13,199,0.16)', 'bar'));
+const optionDht22Yesterday = ref(graphsService.generateTwoSeriesGraphOptions('Yesterday aggregated values DHT22', 'Temperature', 'Humidity %', 10, 0, 20, 100, 'rgba(237,22,22,0.53)', 'rgba(3,13,199,0.6)', 'rgba(3,13,199,0.16)', 'bar'));
 const optionBmeToday = ref(graphsService.generateOneLineGraphOptions('Air quality percentage', 'Air quality %', 40, 100, 'rgb(143,199,3)', 'rgba(143,199,3,0.65)'));
 const optionBmeYesterday = ref(graphsService.generateOneLineGraphOptions('Yesterday aggregated air quality percentage', 'Air quality %', 40, 100, 'rgb(143,199,3)', 'rgba(143,199,3,0.65)'));
+const optionBmeMeteoToday = ref(graphsService.generateTwoSeriesGraphOptions('Today BME meteo values', 'Atmospheric pressure', 'Humidity %', 900, 1090, 20, 100, 'rgba(165,22,237,0.53)', 'rgba(3,13,199,0.6)', 'rgba(3,13,199,0.16)', 'line'));
+const optionBmePressureToday = ref(graphsService.generateOneLineGraphOptions('Gas resistance today', 'Gas resistance', 0, 0, 'rgb(199,101,3)', 'rgba(199,101,3,0.44)'));
 
 const fetchData = async () => {
     try {
@@ -128,6 +130,15 @@ const fetchData = async () => {
         const todayBmeResponse = await axios.get('http://192.168.0.67/sensors/bme680_data/today/2');
         optionBmeToday.value.series[0].data = todayBmeResponse.data.map((item) => item.air_quality_percentage);
         optionBmeToday.value.xAxis.data = todayBmeResponse.data.map((item) => item.measured_at);
+
+        // Meteo data
+        optionBmeMeteoToday.value.series[0].data = todayBmeResponse.data.map((item) => item.pressure);
+        optionBmeMeteoToday.value.series[1].data = todayBmeResponse.data.map((item) => item.humidity);
+        optionBmeMeteoToday.value.xAxis.data = todayBmeResponse.data.map((item) => item.measured_at);
+
+        // Pressure
+        optionBmePressureToday.value.series[0].data = todayBmeResponse.data.map((item) => item.gas_resistance);
+        optionBmePressureToday.value.xAxis.data = todayBmeResponse.data.map((item) => item.measured_at);
 
         // Yesterday aggregated data
         const yesterdayBmeResponse = await axios.get('http://192.168.0.67/history/bme680_data/2/today');
@@ -170,6 +181,20 @@ onMounted(() => {
             <div class="card">
                 <div class="chart-container">
                     <v-chart class="chart" :option="optionBmeYesterday" autoresize />
+                </div>
+            </div>
+        </div>
+        <div class="col-12 xl:col-12">
+            <div class="card">
+                <div class="chart-container">
+                    <v-chart class="chart" :option="optionBmeMeteoToday" autoresize />
+                </div>
+            </div>
+        </div>
+        <div class="col-12 xl:col-12">
+            <div class="card">
+                <div class="chart-container">
+                    <v-chart class="chart" :option="optionBmePressureToday" autoresize />
                 </div>
             </div>
         </div>
