@@ -101,10 +101,10 @@ watch(
     { immediate: true }
 );
 
-const optionDht22Today = ref(graphsService.generateTempHumidityGraphOptions('Today raw values DHT22', 'Temperature', 'Humidity %', 10, 20, 100, 'rgba(237,22,22,0.53)', 'rgba(3,13,199,0.6)', 'rgba(3,13,199,0.16)'));
-const optionDht22Yesterday = ref(graphsService.generateTempHumidityGraphOptions('Yesterday aggregated values DHT22', 'Temperature', 'Humidity %', 10, 20, 100, 'rgba(237,22,22,0.53)', 'rgba(3,13,199,0.6)', 'rgba(3,13,199,0.16)'));
-const optionBmeToday = ref(graphsService.generateOneLineGraphOptions('Air quality percentage', 'Air quality %', 40, 100));
-const optionBmeYesterday = ref(graphsService.generateOneLineGraphOptions('Yesterday aggregated air quality percentage', 'Air quality %', 40, 100));
+const optionDht22Today = ref(graphsService.generateTempHumidityGraphOptions('Today raw values DHT22', 'Temperature', 'Humidity %', 10, 0, 20, 100, 'rgba(237,22,22,0.53)', 'rgba(3,13,199,0.6)', 'rgba(3,13,199,0.16)'));
+const optionDht22Yesterday = ref(graphsService.generateTempHumidityGraphOptions('Yesterday aggregated values DHT22', 'Temperature', 'Humidity %', 10, 0, 20, 100, 'rgba(237,22,22,0.53)', 'rgba(3,13,199,0.6)', 'rgba(3,13,199,0.16)'));
+const optionBmeToday = ref(graphsService.generateOneLineGraphOptions('Air quality percentage', 'Air quality %', 40, 100, 'rgb(143,199,3)', 'rgba(143,199,3,0.65)'));
+const optionBmeYesterday = ref(graphsService.generateOneLineGraphOptions('Yesterday aggregated air quality percentage', 'Air quality %', 40, 100, 'rgb(143,199,3)', 'rgba(143,199,3,0.65)'));
 
 const fetchData = async () => {
     try {

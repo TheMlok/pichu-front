@@ -1,7 +1,38 @@
 export default class GraphsService {
-    generateTempHumidityGraphOptions(title, firstSeriesName, secondSeriesName, temperatureMin, humidityMin, humidityMax, firstLineColor, secondLineColor, areaColor) {
+    generateTempHumidityGraphOptions(title, firstSeriesName, secondSeriesName, firstMin, firstMax, secondMin, secondMax, firstLineColor, secondLineColor, areaColor) {
+        const yAxis = [
+            {
+                type: 'value',
+                name: firstSeriesName,
+                position: 'left',
+                min: firstMin
+            },
+            {
+                type: 'value',
+                name: secondSeriesName,
+                position: 'right',
+                min: secondMin,
+                max: secondMax
+            }
+        ];
+
+        if (firstMin !== 0) {
+            yAxis[0].min = firstMin;
+        }
+
+        if (firstMax !== 0) {
+            yAxis[0].min = firstMin;
+        }
+
+        if (secondMin !== 0) {
+            yAxis[1].min = secondMin;
+        }
+
+        if (secondMax !== 0) {
+            yAxis[1].max = secondMax;
+        }
+
         return {
-            //color: ['rgba(237,22,22,0.53)', 'rgba(3,13,199,0.6)'],
             color: [firstLineColor, secondLineColor],
             title: {
                 text: title,
@@ -23,21 +54,7 @@ export default class GraphsService {
                     fontWeight: 'bold'
                 }
             },
-            yAxis: [
-                {
-                    type: 'value',
-                    name: firstSeriesName,
-                    position: 'left',
-                    min: temperatureMin
-                },
-                {
-                    type: 'value',
-                    name: secondSeriesName,
-                    position: 'right',
-                    min: humidityMin,
-                    max: humidityMax
-                }
-            ],
+            yAxis: yAxis,
             grid: {
                 top: '12%',
                 bottom: '9%',
@@ -64,9 +81,9 @@ export default class GraphsService {
         };
     }
 
-    generateOneLineGraphOptions(title, seriesName, min, max) {
+    generateOneLineGraphOptions(title, seriesName, min, max, lineColor, areaColor) {
         return {
-            color: ['rgb(143,199,3)'],
+            color: lineColor,
             title: {
                 text: title,
                 left: 'center',
@@ -106,7 +123,7 @@ export default class GraphsService {
                     name: seriesName,
                     type: 'line',
                     areaStyle: {
-                        color: 'rgba(143,199,3,0.65)'
+                        color: areaColor
                     },
                     data: []
                 }
