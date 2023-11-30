@@ -101,23 +101,38 @@ watch(
     { immediate: true }
 );
 
-const optionToday = ref(graphsService.generateBasicGraphOptions('Today raw values DHT22', 10, 20, 100));
-const optionYesterday = ref(graphsService.generateBasicGraphOptions('Yesterday aggregated values DHT22', 10, 20, 100));
+const optionDht22Today = ref(graphsService.generateTempHumidityGraphOptions('Today raw values DHT22', 'Temperature', 'Humidity %', 10, 20, 100, 'rgba(237,22,22,0.53)', 'rgba(3,13,199,0.6)', 'rgba(3,13,199,0.16)'));
+const optionDht22Yesterday = ref(graphsService.generateTempHumidityGraphOptions('Yesterday aggregated values DHT22', 'Temperature', 'Humidity %', 10, 20, 100, 'rgba(237,22,22,0.53)', 'rgba(3,13,199,0.6)', 'rgba(3,13,199,0.16)'));
+const optionBmeToday = ref(graphsService.generateOneLineGraphOptions('Air quality percentage', 'Air quality %', 40, 100));
+const optionBmeYesterday = ref(graphsService.generateOneLineGraphOptions('Yesterday aggregated air quality percentage', 'Air quality %', 40, 100));
+
 const fetchData = async () => {
     try {
+        // DHT22
         // Today data
-        const todayResponse = await axios.get('http://192.168.0.67/sensors/dht22_data/today/1');
+        const todayDht22Response = await axios.get('http://192.168.0.67/sensors/dht22_data/today/1');
 
-        optionToday.value.series[0].data = todayResponse.data.map((item) => item.temperature);
-        optionToday.value.series[1].data = todayResponse.data.map((item) => item.humidity);
-        optionToday.value.xAxis.data = todayResponse.data.map((item) => item.measured_at);
+        optionDht22Today.value.series[0].data = todayDht22Response.data.map((item) => item.temperature);
+        optionDht22Today.value.series[1].data = todayDht22Response.data.map((item) => item.humidity);
+        optionDht22Today.value.xAxis.data = todayDht22Response.data.map((item) => item.measured_at);
 
         // yesterday aggregated data
-        const yesterdayResponse = await axios.get('http://192.168.0.67/history/dht22_data/1/yesterday');
+        const yesterdayDht22Response = await axios.get('http://192.168.0.67/history/dht22_data/1/yesterday');
 
-        optionYesterday.value.series[0].data = yesterdayResponse.data.map((item) => item.temperature);
-        optionYesterday.value.series[1].data = yesterdayResponse.data.map((item) => item.humidity);
-        optionYesterday.value.xAxis.data = yesterdayResponse.data.map((item) => item.segment_interval_name);
+        optionDht22Yesterday.value.series[0].data = yesterdayDht22Response.data.map((item) => item.temperature);
+        optionDht22Yesterday.value.series[1].data = yesterdayDht22Response.data.map((item) => item.humidity);
+        optionDht22Yesterday.value.xAxis.data = yesterdayDht22Response.data.map((item) => item.segment_interval_name);
+
+        // BME680
+        // Today data
+        const todayBmeResponse = await axios.get('http://192.168.0.67/sensors/bme680_data/today/2');
+        optionBmeToday.value.series[0].data = todayBmeResponse.data.map((item) => item.air_quality_percentage);
+        optionBmeToday.value.xAxis.data = todayBmeResponse.data.map((item) => item.measured_at);
+
+        // Yesterday aggregated data
+        const yesterdayBmeResponse = await axios.get('http://192.168.0.67/history/bme680_data/2/today');
+        optionBmeYesterday.value.series[0].data = yesterdayBmeResponse.data.map((item) => item.air_quality_percentage);
+        optionBmeYesterday.value.xAxis.data = yesterdayBmeResponse.data.map((item) => item.segment_interval_name);
     } catch (error) {
         console.error('Error fetching data:', error);
     }
@@ -133,14 +148,28 @@ onMounted(() => {
         <div class="col-12 xl:col-12">
             <div class="card">
                 <div class="chart-container">
-                    <v-chart class="chart" :option="optionToday" autoresize />
+                    <v-chart class="chart" :option="optionDht22Today" autoresize />
                 </div>
             </div>
         </div>
         <div class="col-12 xl:col-12">
             <div class="card">
                 <div class="chart-container">
-                    <v-chart class="chart" :option="optionYesterday" autoresize />
+                    <v-chart class="chart" :option="optionDht22Yesterday" autoresize />
+                </div>
+            </div>
+        </div>
+        <div class="col-12 xl:col-12">
+            <div class="card">
+                <div class="chart-container">
+                    <v-chart class="chart" :option="optionBmeToday" autoresize />
+                </div>
+            </div>
+        </div>
+        <div class="col-12 xl:col-12">
+            <div class="card">
+                <div class="chart-container">
+                    <v-chart class="chart" :option="optionBmeYesterday" autoresize />
                 </div>
             </div>
         </div>
