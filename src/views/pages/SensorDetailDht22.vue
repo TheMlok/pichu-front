@@ -2,11 +2,17 @@
 import { onMounted, ref, provide } from 'vue';
 import axios from 'axios';
 import { useRoute } from 'vue-router';
-import { THEME_KEY } from 'vue-echarts';
+import VChart, { THEME_KEY } from 'vue-echarts';
+import GraphsService from '@/service/GraphsService';
+
+const graphsService = new GraphsService();
 
 provide(THEME_KEY, 'light');
 
 const sensorData = ref(null);
+
+const optionToday = ref(graphsService.generateTwoSeriesGraphOptions('Today raw values DHT22', 'Temperature', 'Humidity %', 10, 0, 20, 100, 'rgba(237,22,22,0.53)', 'rgba(3,13,199,0.6)', 'rgba(3,13,199,0.16)', 'bar'));
+const optionYesterday = ref(graphsService.generateTwoSeriesGraphOptions('Yesterday aggregated values DHT22', 'Temperature', 'Humidity %', 10, 0, 20, 100, 'rgba(237,22,22,0.53)', 'rgba(3,13,199,0.6)', 'rgba(3,13,199,0.16)', 'bar'));
 
 const fetchData = async () => {
     try {
@@ -15,6 +21,17 @@ const fetchData = async () => {
 
         const sensorResponse = await axios.get(`http://192.168.0.67/sensors/${id}`);
         sensorData.value = sensorResponse.data;
+
+        const todayData = await axios.get(`http://192.168.0.67/sensors/dht22_data/today/${id}`);
+
+        optionToday.value.series[0].data = todayData.data.map((item) => item.temperature);
+        optionToday.value.series[1].data = todayData.data.map((item) => item.humidity);
+        optionToday.value.xAxis.data = todayData.data.map((item) => item.measured_at);
+
+        const yesterdayData = await axios.get(`http://192.168.0.67/history/dht22_data/${id}/yesterday`);
+        optionYesterday.value.series[0].data = yesterdayData.data.map((item) => item.temperature);
+        optionYesterday.value.series[1].data = yesterdayData.data.map((item) => item.humidity);
+        optionYesterday.value.xAxis.data = yesterdayData.data.map((item) => item.segment_interval_name);
     } catch (error) {
         console.error('Error fetching data:', error);
     }
@@ -45,6 +62,20 @@ onMounted(() => {
                         <p v-if="sensorData"><b>Created at:</b> {{ sensorData.created_at }}</p>
                         <div v-else>Loading...</div>
                     </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 xl:col-12">
+            <div class="card">
+                <div class="chart-container">
+                    <v-chart class="chart" :option="optionToday" autoresize />
+                </div>
+            </div>
+        </div>
+        <div class="col-12 xl:col-12">
+            <div class="card">
+                <div class="chart-container">
+                    <v-chart class="chart" :option="optionYesterday" autoresize />
                 </div>
             </div>
         </div>
