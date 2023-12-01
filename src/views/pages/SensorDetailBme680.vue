@@ -11,12 +11,14 @@ const graphsService = new GraphsService();
 
 const sensorData = ref(null);
 
-const optionToday = ref(graphsService.generateOneLineGraphOptions('Air quality percentage', 'Air quality %', 40, 100, 'rgb(143,199,3)', 'rgba(143,199,3,0.65)'));
-const optionYesterday = ref(graphsService.generateOneLineGraphOptions('Yesterday aggregated air quality percentage', 'Air quality %', 40, 100, 'rgb(143,199,3)', 'rgba(143,199,3,0.65)'));
+const optionToday = ref(graphsService.generateOneLineGraphOptions('Air quality percentage', 'Air quality %', 80, 100, 'rgb(143,199,3)', 'rgba(143,199,3,0.65)'));
+const optionYesterday = ref(graphsService.generateOneLineGraphOptions('Yesterday aggregated air quality percentage', 'Air quality %', 80, 100, 'rgb(143,199,3)', 'rgba(143,199,3,0.65)'));
 const optionMeteoToday = ref(graphsService.generateTwoSeriesGraphOptions('Today BME meteo values', 'Atmospheric pressure', 'Humidity %', 900, 1090, 20, 100, 'rgba(165,22,237,0.53)', 'rgba(3,13,199,0.6)', 'rgba(3,13,199,0.16)', 'line'));
 const optionPressureToday = ref(graphsService.generateOneLineGraphOptions('Gas resistance today', 'Gas resistance', 0, 0, 'rgb(199,101,3)', 'rgba(199,101,3,0.44)'));
 const optionMeteoYesterday = ref(graphsService.generateTwoSeriesGraphOptions('Yesterday BME meteo values', 'Atmospheric pressure', 'Humidity %', 900, 1090, 20, 100, 'rgba(165,22,237,0.53)', 'rgba(3,13,199,0.6)', 'rgba(3,13,199,0.16)', 'line'));
 const optionPressureYesterday = ref(graphsService.generateOneLineGraphOptions('Yesterday gas resistance', 'Gas resistance', 0, 0, 'rgb(199,101,3)', 'rgba(199,101,3,0.44)'));
+const optionTempHumToday = ref(graphsService.generateTwoSeriesGraphOptions('Today temperature and humidity values', 'Temperature', 'Humidity %', 10, 50, 20, 100, 'rgba(237,22,22,0.53)', 'rgba(3,13,199,0.6)', 'rgba(3,13,199,0.16)', 'bar'));
+const optionTempHumYesterday = ref(graphsService.generateTwoSeriesGraphOptions('Yesterday temperature and humidity values', 'Temperature', 'Humidity %', 10, 50, 20, 100, 'rgba(237,22,22,0.53)', 'rgba(3,13,199,0.6)', 'rgba(3,13,199,0.16)', 'bar'));
 
 // TODO spojit grafy gas_resistance a pressure a pak vlhkost a teplotu
 const fetchData = async () => {
@@ -38,6 +40,14 @@ const fetchData = async () => {
         optionMeteoToday.value.series[0].data = todayResponse.data.map((item) => item.pressure);
         optionMeteoToday.value.series[1].data = todayResponse.data.map((item) => item.humidity);
         optionMeteoToday.value.xAxis.data = todayResponse.data.map((item) => item.measured_at);
+
+        optionTempHumToday.value.series[0].data = todayResponse.data.map((item) => item.temperature);
+        optionTempHumToday.value.series[1].data = todayResponse.data.map((item) => item.humidity);
+        optionTempHumToday.value.xAxis.data = todayResponse.data.map((item) => item.measured_at);
+
+        optionTempHumYesterday.value.series[0].data = yesterdayResponse.data.map((item) => item.temperature);
+        optionTempHumYesterday.value.series[1].data = yesterdayResponse.data.map((item) => item.humidity);
+        optionTempHumYesterday.value.xAxis.data = yesterdayResponse.data.map((item) => item.segment_interval_name);
 
         // Pressure
         optionPressureToday.value.series[0].data = todayResponse.data.map((item) => item.gas_resistance);
@@ -122,6 +132,20 @@ onMounted(() => {
             <div class="card">
                 <div class="chart-container">
                     <v-chart class="chart" :option="optionPressureYesterday" autoresize />
+                </div>
+            </div>
+        </div>
+        <div class="col-12 xl:col-12">
+            <div class="card">
+                <div class="chart-container">
+                    <v-chart class="chart" :option="optionTempHumToday" autoresize />
+                </div>
+            </div>
+        </div>
+        <div class="col-12 xl:col-12">
+            <div class="card">
+                <div class="chart-container">
+                    <v-chart class="chart" :option="optionTempHumYesterday" autoresize />
                 </div>
             </div>
         </div>
