@@ -1,36 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
 import AppLayout from '@/layout/AppLayout.vue';
 
-const sensorDetailRoutes = [
-    {
-        path: '/pages/sensor_detail/:sensorType/:id',
-        name: 'sensorDetail',
-        component: () => import('@/views/pages/SensorDetailDht22.vue'), // Set a default component
-        props: true,
-        beforeEnter: (to, from, next) => {
-            const sensorType = to.params.sensorType;
-
-            // Determine the component path based on sensor type
-            switch (sensorType) {
-                case 'dht22':
-                    to.component = () => import('@/views/pages/SensorDetailDht22.vue');
-                    break;
-                case 'bme680':
-                    to.component = () => import('@/views/pages/SensorDetailBme680.vue');
-                    break;
-                case 'tsl2591':
-                    to.component = () => import('@/views/pages/SensorDetailTsl2591.vue');
-                    break;
-                default:
-                    // Use a default component or handle unknown types
-                    to.component = () => import('@/views/pages/SensorDetailDht22.vue');
-            }
-
-            next();
-        }
-    }
-];
-
 const router = createRouter({
     history: createWebHashHistory(),
     routes: [
@@ -63,7 +33,21 @@ const router = createRouter({
                     name: 'sensors',
                     component: () => import('@/views/pages/Sensors.vue')
                 },
-                ...sensorDetailRoutes
+                {
+                    path: '/pages/sensor_detail/dht22/:id',
+                    name: 'sensorsDht',
+                    component: () => import('@/views/pages/SensorDetailDht22.vue')
+                },
+                {
+                    path: '/pages/sensor_detail/bme680/:id',
+                    name: 'sensorsBme',
+                    component: () => import('@/views/pages/SensorDetailBme680.vue')
+                },
+                {
+                    path: '/pages/sensor_detail/tsl2591/:id',
+                    name: 'sensorsTsl',
+                    component: () => import('@/views/pages/SensorDetailTsl2591.vue')
+                }
             ]
         }
     ]
