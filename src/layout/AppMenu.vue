@@ -40,7 +40,8 @@ const fetchData = async () => {
                         const sensors = await axios.get(`http://192.168.0.67/general/device_sensors/${device.id}`);
                         const sensorItems = sensors.data.map((sensor) => ({
                             label: sensor.sensor_type,
-                            icon: 'pi pi-fw pi-server'
+                            icon: 'pi pi-fw pi-server',
+                            to: `/pages/sensor_detail/${sensor.id}`
                         }));
 
                         return {

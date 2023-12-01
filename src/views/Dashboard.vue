@@ -1,7 +1,5 @@
 <script setup>
-import { onMounted, ref, provide, watch } from 'vue';
-import ProductService from '@/service/ProductService';
-import { useLayout } from '@/layout/composables/layout';
+import { onMounted, ref, provide } from 'vue';
 
 import { use } from 'echarts/core';
 import { CanvasRenderer } from 'echarts/renderers';
@@ -17,89 +15,6 @@ const graphsService = new GraphsService();
 use([CanvasRenderer, LineChart, BarChart, TitleComponent, TooltipComponent, LegendComponent, GridComponent]);
 
 provide(THEME_KEY, 'light');
-
-const { isDarkTheme } = useLayout();
-
-const products = ref(null);
-
-const lineOptions = ref(null);
-const productService = new ProductService();
-
-onMounted(() => {
-    productService.getProductsSmall().then((data) => (products.value = data));
-});
-
-const applyLightTheme = () => {
-    lineOptions.value = {
-        plugins: {
-            legend: {
-                labels: {
-                    color: '#495057'
-                }
-            }
-        },
-        scales: {
-            x: {
-                ticks: {
-                    color: '#495057'
-                },
-                grid: {
-                    color: '#ebedef'
-                }
-            },
-            y: {
-                ticks: {
-                    color: '#495057'
-                },
-                grid: {
-                    color: '#ebedef'
-                }
-            }
-        }
-    };
-};
-
-const applyDarkTheme = () => {
-    lineOptions.value = {
-        plugins: {
-            legend: {
-                labels: {
-                    color: '#ebedef'
-                }
-            }
-        },
-        scales: {
-            x: {
-                ticks: {
-                    color: '#ebedef'
-                },
-                grid: {
-                    color: 'rgba(160, 167, 181, .3)'
-                }
-            },
-            y: {
-                ticks: {
-                    color: '#ebedef'
-                },
-                grid: {
-                    color: 'rgba(160, 167, 181, .3)'
-                }
-            }
-        }
-    };
-};
-
-watch(
-    isDarkTheme,
-    (val) => {
-        if (val) {
-            applyDarkTheme();
-        } else {
-            applyLightTheme();
-        }
-    },
-    { immediate: true }
-);
 
 const optionDht22Today = ref(graphsService.generateTwoSeriesGraphOptions('Today raw values DHT22', 'Temperature', 'Humidity %', 10, 0, 20, 100, 'rgba(237,22,22,0.53)', 'rgba(3,13,199,0.6)', 'rgba(3,13,199,0.16)', 'bar'));
 const optionDht22Yesterday = ref(graphsService.generateTwoSeriesGraphOptions('Yesterday aggregated values DHT22', 'Temperature', 'Humidity %', 10, 0, 20, 100, 'rgba(237,22,22,0.53)', 'rgba(3,13,199,0.6)', 'rgba(3,13,199,0.16)', 'bar'));

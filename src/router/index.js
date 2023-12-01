@@ -34,6 +34,11 @@ const router = createRouter({
                     component: () => import('@/views/pages/Sensors.vue')
                 },
                 {
+                    path: '/pages/sensor_detail/:id',
+                    name: 'sensorDetail',
+                    component: () => import('@/views/pages/SensorDetail.vue')
+                },
+                {
                     path: '/uikit/menu',
                     component: () => import('@/views/uikit/Menu.vue'),
                     children: [
