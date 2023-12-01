@@ -18,6 +18,7 @@ const optionPressureToday = ref(graphsService.generateOneLineGraphOptions('Gas r
 const optionMeteoYesterday = ref(graphsService.generateTwoSeriesGraphOptions('Yesterday BME meteo values', 'Atmospheric pressure', 'Humidity %', 900, 1090, 20, 100, 'rgba(165,22,237,0.53)', 'rgba(3,13,199,0.6)', 'rgba(3,13,199,0.16)', 'line'));
 const optionPressureYesterday = ref(graphsService.generateOneLineGraphOptions('Yesterday gas resistance', 'Gas resistance', 0, 0, 'rgb(199,101,3)', 'rgba(199,101,3,0.44)'));
 
+// TODO spojit grafy gas_resistance a pressure a pak vlhkost a teplotu
 const fetchData = async () => {
     try {
         const route = useRoute(); // Access route object here
