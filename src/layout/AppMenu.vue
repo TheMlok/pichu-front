@@ -41,7 +41,7 @@ const fetchData = async () => {
                         const sensorItems = sensors.data.map((sensor) => ({
                             label: sensor.sensor_type,
                             icon: 'pi pi-fw pi-server',
-                            to: `/pages/sensor_detail/${sensor.id}`
+                            to: `/pages/sensor_detail/${sensor.sensor_type}/${sensor.id}`
                         }));
 
                         return {
