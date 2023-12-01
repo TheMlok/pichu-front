@@ -11,7 +11,7 @@ const model = ref([
     },
     {
         label: 'Graphs',
-        items: [{ label: 'Daily graphs', icon: 'pi pi-fw pi-chart-bar', to: '/uikit/formlayout' }]
+        items: [{ label: 'Daily graphs', icon: 'pi pi-fw pi-chart-bar', to: '/pages/daily_graphs' }]
     },
     {
         label: 'Summaries',

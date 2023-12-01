@@ -14,9 +14,9 @@ const router = createRouter({
                     component: () => import('@/views/Dashboard.vue')
                 },
                 {
-                    path: '/uikit/formlayout',
-                    name: 'formlayout',
-                    component: () => import('@/views/uikit/FormLayout.vue')
+                    path: '/pages/daily_graphs',
+                    name: 'dailyGraphs',
+                    component: () => import('@/views/pages/DailyGraphs.vue')
                 },
                 {
                     path: '/pages/locations',
@@ -37,16 +37,6 @@ const router = createRouter({
                     path: '/pages/sensor_detail/:id',
                     name: 'sensorDetail',
                     component: () => import('@/views/pages/SensorDetail.vue')
-                },
-                {
-                    path: '/uikit/menu',
-                    component: () => import('@/views/uikit/Menu.vue'),
-                    children: [
-                        {
-                            path: '/uikit/menu',
-                            component: () => import('@/views/uikit/menu/PersonalDemo.vue')
-                        }
-                    ]
                 }
             ]
         }
